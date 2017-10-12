@@ -20,6 +20,11 @@ import org.xml.sax.SAXException;
 
 import com.appzspot.restez.util.annotation.EzModel;
 
+/**
+ * 
+ * @author Faisal
+ * The XMLUtils class is used as a utility class for the xml config file.
+ */
 public class XMLUtil {
 
 	

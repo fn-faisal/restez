@@ -1,5 +1,10 @@
 package com.appzspot.restez.util.exceptions;
 
+/**
+ * 
+ * @author Faisal
+ * The EZExceptionResponseNot200Exception is used for non 200 response exceptions.
+ */
 public class EZExceptionResponseNot200Exception extends Exception{
 	
 	private static final String exceptionMessage = "The uri '%uri%' return status code other than 200 , RESPONSE_CODE : %rcode%";

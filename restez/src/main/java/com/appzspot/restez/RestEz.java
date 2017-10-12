@@ -31,12 +31,24 @@ import com.appzspot.restez.util.reflection.ClassAccessor;
 import com.appzspot.restez.util.xml.XMLContract;
 import com.appzspot.restez.util.xml.XMLUtil;
 
+/**
+ * 
+ * @author Faisal
+ *
+ * The main RestEz class.
+ *
+ */
 public class RestEz {
 
 	private static EzCache cache;
 	private static Config configuration;
 	private static Query query;
 
+	/**
+	 * Configure RestEz from given data.
+	 * No argument configure method( Used when the ezconfig.xml file is available ).
+	 * @throws Exception
+	 */
 	public synchronized static void configure() throws Exception {
 		if (configuration == null) {
 			XMLUtil xmlUtil = new XMLUtil();
@@ -71,6 +83,11 @@ public class RestEz {
 		}
 	}
 
+	/**
+	 * Return the cache object.
+	 * @return EzCache.
+	 * @throws Exception
+	 */
 	public synchronized static EzCache getCache() throws Exception {
 		if (cache == null) {
 			cache = new EzCache();
@@ -78,6 +95,11 @@ public class RestEz {
 		return cache;
 	}
 
+	/**
+	 * Get the Configuration object.
+	 * @return Config object.
+	 * @throws Exception
+	 */
 	public synchronized static Config getConfiguration() throws Exception {
 		if (configuration == null) {
 			XMLUtil xmlUtil = new XMLUtil();
@@ -96,11 +118,11 @@ public class RestEz {
 	}
 
 	/***
-	 * 
-	 * @param ezName
-	 * @param ezUrl
+	 * Method used to get the Config object and initialize it if it already has not been initialized.
+	 * @param ezName the module name.
+	 * @param ezUrl the api URL.
 	 * @param classes model classes
-	 * @return
+	 * @return Config object.
 	 * @throws Exception
 	 */
 	public synchronized static Config getConfigure(String ezName, String ezUrl, Class...classes )
@@ -111,6 +133,11 @@ public class RestEz {
 		return configuration;
 	}
 
+	/**
+	 * Get the query object that is used to call Rest API end points.
+	 * @param config the configuration object.
+	 * @return the Query object.
+	 */
 	public synchronized static Query getQuery(Config config) {
 
 		if (query == null)
@@ -120,24 +147,49 @@ public class RestEz {
 
 	}
 
+	/**
+	 * @author Faisal
+	 *	Query class is used to call Rest API end points with or without different parameters.
+	 *
+	 */
 	public static class Query {
 
 		private Config config;
 		private boolean storeInCache;
 
+		/**
+		 * Single arg constructor.
+		 * @param config the Config object
+		 */
 		private Query(Config config) {
 			this.config = config;
 			this.storeInCache = true;
 		}
 
+		/**
+		 * Check if store in cache option is toggled.
+		 * @return true if cache storage is allowed, false otherwise.
+		 */
 		public boolean isStoreInCache() {
 			return storeInCache;
 		}
 
+		/**
+		 * Set caching of the API calls.
+		 * @param storeInCache allow caching or not
+		 */
 		public void setStoreInCache(boolean storeInCache) {
 			this.storeInCache = storeInCache;
 		}
 
+		/**
+		 * Execute the query and call the API end point.
+		 * @param modelClass the model that reflects the API end point.
+		 * @param query the query ( eg. q=?,c=? )
+		 * @param parameters the parameters for the query.
+		 * @return The resulting response ( Object for single object respone and ArrayList for multiple object response )
+		 * @throws Exception
+		 */
 		public <R, T> R execQuery(Class modelClass, String query, T... parameters) throws Exception {
 
 			ClassAccessor classAccessor = new ClassAccessor();
@@ -195,6 +247,13 @@ public class RestEz {
 			return responseObject;
 		}
 
+		/**
+		 * Execute the query and call the API end point.
+		 * @param modelClass the model that reflects the end point.
+		 * @param parameter optional parameter ( if no parameter is required, use an empty string )
+		 * @return Object for single object response, ArrayList for multiple objects response.
+		 * @throws Exception
+		 */
 		public <R, T> R execQuery(Class modelClass, T parameter) throws Exception {
 
 			ClassAccessor classAccessor = new ClassAccessor();
@@ -228,11 +287,26 @@ public class RestEz {
 			return responseObject;
 		}
 
+		/**
+		 * Convert the response to Java Object.
+		 * @param modelClass the model that Reflects the API end point. 
+		 * @param json the json response.
+		 * @param methods a HashMap of the getter and setter methods.
+		 * @return The response as Java Object.
+		 * @throws Exception
+		 */
 		private <T> T getObjectFromResponse(Class modelClass, String json, HashMap methods) throws Exception {
 			EzJson ezJson = new EzJson();
 			return ezJson.getObjectFromJsonString(modelClass, json, methods);
 		}
 
+		/**
+		 * Call the API ending for the given URL
+		 * @param url the url of the end point.
+		 * @return the response.
+		 * @throws IOException
+		 * @throws EZExceptionResponseNot200Exception
+		 */
 		private String getResponse(String url) throws IOException, EZExceptionResponseNot200Exception {
 
 			HttpClient client = new HttpClient();
@@ -247,6 +321,11 @@ public class RestEz {
 
 	}
 
+	/**
+	 * 
+	 * @author Faisal
+	 * The EzCache class is used to cache responses to avoid redundant duplicate API calls. 
+	 */
 	public static class EzCache {
 
 		// key : uri , val : obj
@@ -287,6 +366,11 @@ public class RestEz {
 
 	}
 
+	/**
+	 * 
+	 * @author Faisal
+	 * The Config class is used to configure RestEz.
+	 */
 	public static class Config {
 
 		// component name
@@ -409,6 +493,11 @@ public class RestEz {
 
 		}
 
+		/**
+		 * Initialize the EzUrl
+		 * @param document the config file
+		 * @throws XPathExpressionException
+		 */
 		private void initEzUrl(Document document) throws XPathExpressionException {
 			XMLUtil xmlUtil = new XMLUtil();
 
@@ -430,6 +519,11 @@ public class RestEz {
 
 		}
 
+		/**
+		 * Initialize model objects that reflect the API end points.
+		 * @param document the config file.
+		 * @throws Exception
+		 */
 		private void initEzModel(Document document) throws Exception {
 			ClassAccessor classAccessor = new ClassAccessor();
 			XMLUtil xmlUtil = new XMLUtil();
@@ -549,7 +643,12 @@ public class RestEz {
 				}
 			}
 		}
-
+		
+		/**
+		 * Check if the model exists.
+		 * @param modelName the EzModel name.
+		 * @return true if model exists, false otherwise.
+		 */
 		public boolean ezModelContains(String modelName) {
 
 			for (EzModelConfigs model : restEzModels) {
@@ -560,6 +659,12 @@ public class RestEz {
 			return false;
 		}
 
+		/**
+		 * Get the configuration for the class.
+		 * @param modelClass the model class
+		 * @return Model config object.
+		 * @throws ClassNotFoundException
+		 */
 		public EzModelConfigs getEzModelConfigsForClass(Class modelClass) throws ClassNotFoundException {
 			ClassAccessor classAccessor = new ClassAccessor();
 
@@ -575,26 +680,50 @@ public class RestEz {
 			return null;
 		}
 
+		/**
+		 * Get the configurations for the model classes
+		 * @return an array list of model config objects.
+		 */
 		public ArrayList<EzModelConfigs> getRestEzModels() {
 			return restEzModels;
 		}
 
+		/**
+		 * Get the configurations for the model classes.
+		 * @param restEzModels the list of model config objects.
+		 */
 		public void setRestEzModels(ArrayList<EzModelConfigs> restEzModels) {
 			this.restEzModels = restEzModels;
 		}
 
+		/**
+		 * Get the Ez Module name.
+		 * @return the module name.
+		 */
 		public String getEzName() {
 			return ezName;
 		}
 
+		/**
+		 * Set the Ez Module name.
+		 * @param ezName the name for the module.
+		 */
 		public void setEzName(String ezName) {
 			this.ezName = ezName;
 		}
 
+		/**
+		 * Get the API url.
+		 * @return the API url.
+		 */
 		public EzUrl getEzUrl() {
 			return ezUrl;
 		}
 
+		/**
+		 * Set the API url.
+		 * @param ezUrl the API url.
+		 */
 		public void setEzUrl(EzUrl ezUrl) {
 			this.ezUrl = ezUrl;
 		}
@@ -602,7 +731,7 @@ public class RestEz {
 		/***
 		 * 
 		 * @author Faisal
-		 *         <h3>URL class to hold url config data</h3>
+		 * The EzUrl class holds the main/host url of the REST API.
 		 */
 		public class EzUrl {
 
@@ -630,7 +759,7 @@ public class RestEz {
 		/***
 		 *
 		 * @author Faisal
-		 *         <h3>Model class to hold model config data</h3>
+		 * The EzModelConfigs class holds configuration data related to each individual model class.
 		 */
 		public class EzModelConfigs {
 
@@ -643,34 +772,66 @@ public class RestEz {
 				methods = new HashMap<String, String>();
 			}
 
+			/**
+			 * Return the getter and setter methods for the fields that reflect the JSON response.
+			 * @return the getter and setter methods.
+			 */
 			public HashMap<String, String> getMethods() {
 				return methods;
 			}
-
+			
+			/**
+			 * Set the getter and setter methods for the fields that reflect the JSON response.
+			 * @param methods the getter and setter methods.
+			 */
 			public void setMethods(HashMap<String, String> methods) {
 				this.methods = methods;
 			}
 
+			/**
+			 * Get the name of the model.
+			 * @return the name of the model.
+			 */
 			public String getName() {
 				return name;
 			}
 
+			/**
+			 * Set the name of the model.
+			 * @param name the name of the model.
+			 */
 			public void setName(String name) {
 				this.name = name;
 			}
 
+			/**
+			 * Get the path of the model class.
+			 * @return the path of the model class.
+			 */
 			public String getClassPath() {
 				return classPath;
 			}
 
+			/**
+			 * Set the path of the model class.
+			 * @param classPath the path of the model class.
+			 */
 			public void setClassPath(String classPath) {
 				this.classPath = classPath;
 			}
 
+			/**
+			 * Get the url extension of the model class.
+			 * @return the Url extension of the model class.
+			 */
 			public String getModelExtension() {
 				return modelExtension;
 			}
 
+			/**
+			 * Set the url extension for the model class.
+			 * @param modelExtension
+			 */
 			public void setModelExtension(String modelExtension) {
 				this.modelExtension = modelExtension;
 			}

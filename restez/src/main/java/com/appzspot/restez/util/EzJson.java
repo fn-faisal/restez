@@ -20,8 +20,21 @@ import com.appzspot.restez.RestEz.Config.EzModelConfigs;
 import com.appzspot.restez.util.annotation.EzItem;
 import com.appzspot.restez.util.reflection.ClassAccessor;
 
+/**
+ * 
+ * @author Faisal
+ * The EzJson class is used to handle Json object response.
+ */
 public class EzJson {
 
+	/**
+	 * Convert the JSON response to model object.
+	 * @param modelClass the model class.
+	 * @param json the JSON response.
+	 * @param methods the getter and setter methods that reflect the JSON response.
+	 * @return converted object.
+	 * @throws Exception
+	 */
 	public <T> T getObjectFromJsonString(Class modelClass, String json, HashMap methods) throws Exception {
 
 		Object obj = new JSONTokener(json).nextValue();
@@ -39,6 +52,14 @@ public class EzJson {
 		return null;
 	}
 
+	/**
+	 * Get an array list of objects from a JSON array
+	 * @param modelClass the model class
+	 * @param jsonArr the json array
+	 * @param methods the getter and setter methods.
+	 * @return
+	 * @throws Exception
+	 */
 	private <T> T getObjectListFromJSONArray(Class modelClass, JSONArray jsonArr, HashMap methods) throws Exception {
 
 		ArrayList objectList = new ArrayList();
@@ -101,6 +122,12 @@ public class EzJson {
 		return (T) objectList;
 	}
 
+	/**
+	 * Get the Java value from the json object. 
+	 * @param json the JSON object
+	 * @param key the key to look for in JSON.
+	 * @return the value of the key in JSON.
+	 */
 	public <T> T getJsonVal(Object json, String key) {
 
 		// path found
@@ -138,6 +165,11 @@ public class EzJson {
 		}
 	}
 
+	/**
+	 * Get the string array from a JSON array.
+	 * @param json the JSON array.
+	 * @return the String array.
+	 */
 	private String[] getStringArrayFromJsonArray(JSONArray json) {
 
 		String[] stringArr = new String[json.length()];
@@ -153,6 +185,14 @@ public class EzJson {
 		return stringArr;
 	}
 
+	/**
+	 * Get Java object from the json object using the model class.
+	 * @param modelClass the model class.
+	 * @param json the json object
+	 * @param methods the getter and setter methods.
+	 * @return the object.
+	 * @throws Exception
+	 */
 	private <T> T getObjectFromJSONObject(Class modelClass, JSONObject json, HashMap methods) throws Exception {
 
 		Object object = modelClass.newInstance();
@@ -209,6 +249,12 @@ public class EzJson {
 		return (T) object;
 	}
 
+	/**
+	 * Check if JSON object contains a key.
+	 * @param json the JSON object
+	 * @param key the key to look for.
+	 * @return true if key found, false otherwise.
+	 */
 	private boolean jsonHas(JSONObject json, String key) {
 		
 		if (json.has(key))

@@ -1,5 +1,10 @@
 package com.appzspot.restez.util.xml;
 
+/**
+ * 
+ * @author Faisal
+ * The XMLContract is used to hold constant data related to the XML config file.
+ */
 public class XMLContract {
 
 	public class ConfigContract{

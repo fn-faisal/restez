@@ -18,6 +18,11 @@ import com.appzspot.restez.RestEz.Config.EzModelConfigs;
 import com.appzspot.restez.util.annotation.EzItem;
 import com.appzspot.restez.util.annotation.EzModel;
 
+/**
+ * 
+ * @author Faisal
+ * The ClassAccessor class is used for class reflection.
+ */
 public class ClassAccessor {
 
 	/***
@@ -32,6 +37,12 @@ public class ClassAccessor {
 		return Class.forName(name);
 	}
 
+	/**
+	 * Get the class's EzModel annotation.
+	 * @param className the class name.
+	 * @return EzModel annotation if class annotated, null otherwise.
+	 * @throws ClassNotFoundException
+	 */
 	public EzModel getClassEzModelAnnotation(String className) throws ClassNotFoundException {
 
 		Class modelClass = Class.forName(className);
@@ -43,6 +54,11 @@ public class ClassAccessor {
 		return null;
 	}
 
+	/**
+	 * Get the model classes for the given package.
+	 * @param pkg the package name.
+	 * @return A set of classes that are annotated with EzModel annotation.
+	 */
 	public Set<Class<?>> getEzModelClasses(String pkg) {
 
 		// search debug for all annotated classes
@@ -52,6 +68,12 @@ public class ClassAccessor {
 		return annotated;
 	}
 
+	/**
+	 * Save the getter and setter methods to the given HashMap
+	 * @param modelClass the model class.
+	 * @param methodsMap the HashMap to save the getter/setter methods for.
+	 * @throws Exception
+	 */
 	public void saveMethodsToHash(Class modelClass, HashMap methodsMap) throws Exception {
 
 		if (modelClass.isAnnotationPresent(EzModel.class)) {
@@ -106,6 +128,12 @@ public class ClassAccessor {
 
 	}
 
+	/**
+	 * Get a method by its name.
+	 * @param model the model class.
+	 * @param name the name of the method.
+	 * @return the method, if found, null otherwise.
+	 */
 	public Method getMethodByName ( Class model, String name ){
 		
 		Method[] methodsInClass = model.getMethods();
@@ -119,6 +147,15 @@ public class ClassAccessor {
 		return null;
 	}
 	
+	/**
+	 * Validate annotations for the given class set.
+	 * Check whether all of the given classes in class set are 
+	 * annotated with {@link EzModel} annotation and the fields 
+	 * are annotated with {@link EzItem} annotation and the respective fields 
+	 * have getters and setters defined.
+	 * @param classes the class set
+	 * @throws Exception
+	 */
 	public void validateAnnotations(Set<Class<?>> classes) throws Exception {
 
 		for (Class c : classes) {
