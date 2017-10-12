@@ -1,11 +1,10 @@
 # restez
-# restez
 An ORM style api made for Rest Api which allows fast, easy and efficient access to the Rest APIs
 
 ### Dependencies:-
 * [reflection]( https://mvnrepository.com/artifact/org.reflections/reflections )
 * [commons-io]( https://mvnrepository.com/artifact/commons-io/commons-io )
-* [json] ( https://mvnrepository.com/artifact/org.json/json/20160810 )
+* [json]( https://mvnrepository.com/artifact/org.json/json/20160810 )
 
 ### Getting Started:-
  
